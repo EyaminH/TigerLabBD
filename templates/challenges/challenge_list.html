@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Challenges — TigerLabBD{% endblock %}
+
+{% block content %}
+<div class="mb-4 animate-on-scroll">
+    <h1 class="display-5 fw-bold mb-2"><span class="text-gradient">Challenges</span></h1>
+    <p class="fs-5" style="color: var(--text-muted);">Browse and solve tasks across various categories.</p>
+</div>
+
+
+{% for category in categories %}
+    <div class="mb-5 animate-on-scroll">
+        <h3 class="fw-bold mb-4 h5 d-flex align-items-center gap-2" style="color: var(--text-primary);">
+            <span style="width: 4px; height: 24px; background: var(--accent-gradient); border-radius: 2px; display: inline-block;"></span>
+            {{ category.name }}
+        </h3>
+        
+        <div class="row g-4">
+            {% for challenge in challenges %}
+                {% if challenge.category == category %}
+                    <div class="col-md-4 col-lg-4">
+                        <div class="card challenge-card h-100 {% if challenge.id in solved_challenges %}glow-border{% endif %}">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    {% if challenge.id in solved_challenges %}
+                                        <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.25);">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Solved
+                                        </span>
+                                    {% else %}
+                                        <span class="mono fw-bold small" style="color: var(--accent-primary);">{{ challenge.points }} PTS</span>
+                                    {% endif %}
+                                </div>
+
+                                <h5 class="card-title fw-bold mb-2">{{ challenge.title }}</h5>
+                                <p class="card-text small mb-3" style="color: var(--text-muted);">{{ challenge.description|truncatewords:15 }}</p>
+                                
+                                <div class="d-flex align-items-center justify-content-between mt-auto pt-3" style="border-top: 1px solid var(--border-color);">
+                                    <a href="{% url 'public_profile' challenge.author.username %}" class="d-flex align-items-center text-decoration-none" style="color: var(--text-secondary);">
+                                        <span class="avatar-sm me-2" style="width:28px;height:28px;font-size:0.7rem;">{{ challenge.author.username|first|upper }}</span>
+                                        <span class="small">{{ challenge.author.username|default:"System" }}</span>
+                                    </a>
+                                    <a href="{% url 'challenge_detail' challenge.pk %}" class="btn {% if challenge.id in solved_challenges %}btn-outline-success{% else %}btn-outline-primary{% endif %} btn-sm px-3">
+                                        {% if challenge.id in solved_challenges %}
+                                            <i class="bi bi-check-lg me-1"></i>Solved
+                                        {% else %}
+                                            Solve <i class="bi bi-arrow-right ms-1"></i>
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% empty %}
+    <div class="text-center py-5">
+        <i class="bi bi-inbox display-4 d-block mb-3" style="color: var(--text-muted);"></i>
+        <p class="text-muted">No categories available.</p>
+    </div>
+{% endfor %}
+{% endblock %}

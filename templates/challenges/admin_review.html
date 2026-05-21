@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Review — TigerLabBD{% endblock %}
+
+{% block content %}
+<div class="mb-5 animate-on-scroll">
+    <h1 class="display-5 fw-bold mb-2"><span class="text-gradient">Admin Review</span></h1>
+    <p class="fs-5" style="color: var(--text-muted);">Review challenge submissions and user reports.</p>
+</div>
+
+<!-- Pending Challenges -->
+<div class="mb-5 animate-on-scroll">
+    <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
+        <span style="width: 4px; height: 24px; background: var(--accent-gradient); border-radius: 2px; display: inline-block;"></span>
+        Pending Challenges
+        {% if pending_challenges %}
+            <span class="badge bg-warning bg-opacity-25 text-warning ms-2">{{ pending_challenges|length }}</span>
+        {% endif %}
+    </h4>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Challenge</th>
+                            <th>Category</th>
+                            <th>Points</th>
+                            <th>Date</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for challenge in pending_challenges %}
+                            <tr>
+                                <td class="ps-4">
+                                    <a href="{% url 'admin_challenge_detail' challenge.pk %}" class="fw-bold text-decoration-none" style="color: var(--text-primary);">{{ challenge.title }}</a>
+                                    <div class="small" style="color: var(--text-muted);">by {{ challenge.author.username }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background: rgba(13, 148, 136, 0.1); color: var(--accent-primary); border: 1px solid rgba(13, 148, 136, 0.2);">
+                                        {{ challenge.category.name }}
+                                    </span>
+                                </td>
+                                <td class="fw-medium mono">{{ challenge.points }}</td>
+                                <td class="small" style="color: var(--text-muted);">{{ challenge.created_at|date:"M d, Y" }}</td>
+                                <td class="text-end pe-4">
+                                    <a href="{% url 'admin_challenge_detail' challenge.pk %}" class="btn btn-primary btn-sm px-3">Review</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5" style="color: var(--text-muted);">
+                                    <i class="bi bi-check-circle display-6 d-block mb-2"></i>
+                                    No pending challenges.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reports Section -->
+<div class="animate-on-scroll">
+    <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
+        <span style="width: 4px; height: 24px; background: linear-gradient(135deg, var(--danger), var(--warning)); border-radius: 2px; display: inline-block;"></span>
+        Open Reports
+        {% if reports %}
+            <span class="badge bg-danger bg-opacity-25 text-danger ms-2">{{ reports|length }}</span>
+        {% endif %}
+    </h4>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Reported By</th>
+                            <th>Challenge</th>
+                            <th>Reason</th>
+                            <th>Details</th>
+                            <th>Date</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                            <tr>
+                                <td class="ps-4">
+                                    <a href="{% url 'public_profile' report.user.username %}" class="text-decoration-none d-flex align-items-center gap-2">
+                                        <span class="avatar-sm" style="width:28px;height:28px;font-size:0.65rem;">{{ report.user.username|first|upper }}</span>
+                                        {{ report.user.username }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'admin_challenge_detail' report.challenge.pk %}" class="text-decoration-none fw-medium">
+                                        {{ report.challenge.title }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning bg-opacity-15 text-warning border border-warning border-opacity-25">
+                                        {{ report.get_reason_display }}
+                                    </span>
+                                </td>
+                                <td class="small" style="color: var(--text-muted); max-width: 200px;">
+                                    {{ report.details|truncatewords:12|default:"—" }}
+                                </td>
+                                <td class="small" style="color: var(--text-muted);">{{ report.created_at|date:"M d" }}</td>
+                                <td class="text-end pe-4">
+                                    <form method="post" action="{% url 'resolve_report' report.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-success btn-sm px-3" onclick="return confirm('Mark this report as resolved?')">
+                                            <i class="bi bi-check-lg me-1"></i>Resolve
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5" style="color: var(--text-muted);">
+                                    <i class="bi bi-shield-check display-6 d-block mb-2"></i>
+                                    No open reports.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

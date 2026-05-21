@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Register — TigerLabBD{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center mb-5" style="min-height: 80vh;">
+    <div class="col-md-7">
+        <div class="text-center mb-4 animate-on-scroll">
+            <div class="mb-3">
+                <i class="bi bi-person-plus-fill display-4 text-gradient"></i>
+            </div>
+            <h1 class="fw-bold mb-2">Create Account</h1>
+            <p style="color: var(--text-muted);">Join TigerLabBD and start solving challenges.</p>
+        </div>
+
+        <div class="card glow-border p-4 animate-on-scroll">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        {% for field in form %}
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-bold small">
+                                    {{ field.label }}
+                                </label>
+                                
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <div class="small mb-1" style="color: var(--danger);">
+                                            <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+
+                                <input type="{{ field.field.widget.input_type|default:'text' }}" 
+                                       name="{{ field.name }}" 
+                                       id="{{ field.id_for_label }}" 
+                                       class="form-control py-2 {% if field.errors %}border-danger{% endif %}"
+                                       {% if field.field.required %}required{% endif %}
+                                       placeholder="{{ field.label }}">
+
+                                {% if field.help_text %}
+                                    <div class="form-text small mt-1" style="color: var(--text-muted); opacity: 0.8;">{{ field.help_text|safe }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100 py-2 mt-4 fw-bold">
+                        <i class="bi bi-rocket-takeoff me-2"></i>Create Account
+                    </button>
+                </form>
+
+                <div class="mt-4 pt-4 text-center" style="border-top: 1px solid var(--border-color);">
+                    <p class="small mb-0" style="color: var(--text-muted);">
+                        Already have an account? <a href="{% url 'login' %}" class="text-decoration-none fw-bold">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

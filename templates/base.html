@@ -1,0 +1,559 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TigerLabBD - Bangladesh's premier Capture The Flag cybersecurity training platform.">
+    <title>{% block title %}TigerLabBD{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --bg-primary: #ecfdf5;
+            --bg-secondary: #f0fdf4;
+            --bg-card: #f0fdf9;
+            --bg-card-hover: #e6f7f0;
+            --border-color: #d1e7dd;
+            --border-glow: #0d9488;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent-primary: #0d9488;
+            --accent-secondary: #0ea5e9;
+            --accent-gradient: linear-gradient(135deg, #0d9488, #14b8a6, #0ea5e9);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── CSS Animations ── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in { animation: fadeInUp 0.5s ease both; }
+        .fade-in-1 { animation: fadeInUp 0.5s ease 0.1s both; }
+        .fade-in-2 { animation: fadeInUp 0.5s ease 0.2s both; }
+        .fade-in-3 { animation: fadeInUp 0.5s ease 0.3s both; }
+
+        /* ── Navbar ── */
+        .navbar {
+            background: #ecfdf5 !important;
+            border-bottom: 2px solid var(--accent-primary);
+            padding: 0.6rem 0;
+            z-index: 1000;
+            box-shadow: 0 2px 12px rgba(13, 148, 136, 0.06);
+        }
+
+        .navbar-scrolled {
+            box-shadow: 0 4px 20px rgba(13, 148, 136, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            color: var(--accent-primary) !important;
+            letter-spacing: -0.02em;
+            font-size: 1.3rem;
+        }
+
+        .navbar-brand img {
+            filter: none;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--text-secondary) !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-primary) !important;
+            background: rgba(13, 148, 136, 0.06);
+        }
+
+        .nav-link.active-link {
+            color: var(--accent-primary) !important;
+            background: rgba(13, 148, 136, 0.08);
+        }
+
+        .navbar-toggler {
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .navbar-toggler-icon {
+            filter: none;
+        }
+
+        /* ── Buttons ── */
+        .btn-primary {
+            background: var(--accent-gradient);
+            border: none;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(13, 148, 136, 0.35);
+            background: var(--accent-gradient);
+        }
+
+        .btn-outline-primary {
+            color: var(--accent-primary);
+            border: 1.5px solid var(--accent-primary);
+            font-weight: 600;
+            border-radius: 10px;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(13, 148, 136, 0.25);
+        }
+
+        .btn-outline-success {
+            color: var(--success);
+            border-color: var(--success);
+            background: transparent;
+        }
+
+        .btn-outline-success:hover {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .btn-outline-warning {
+            color: var(--warning);
+            border-color: rgba(245, 158, 11, 0.5);
+            background: transparent;
+        }
+
+        .btn-outline-warning:hover {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            border-color: rgba(13, 148, 136, 0.3);
+        }
+
+        .challenge-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-card::before {
+            content: '';
+            position: absolute;
+            top: var(--mouse-y, 50%);
+            left: var(--mouse-x, 50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(13, 148, 136, 0.1) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .challenge-card:hover::before {
+            opacity: 1;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(13, 148, 136, 0.12);
+        }
+
+        .challenge-card > * { position: relative; z-index: 1; }
+
+        /* ── Glass elements ── */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(13, 148, 136, 0.15);
+            border-radius: 16px;
+        }
+
+        /* ── Badges ── */
+        .badge {
+            font-weight: 600;
+            padding: 0.4em 0.8em;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        .badge-glow {
+            box-shadow: 0 0 12px rgba(13, 148, 136, 0.2);
+        }
+
+        /* ── Tables ── */
+        .table {
+            color: var(--text-primary);
+            --bs-table-bg: transparent;
+        }
+
+        .table thead th {
+            background: #f8fdfb;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table-hover tbody tr:hover {
+            background: rgba(13, 148, 136, 0.04);
+        }
+
+        /* ── Form controls ── */
+        .form-control, .form-select {
+            background: #f0fdf9;
+            border: 1.5px solid #d1e7dd;
+            color: var(--text-primary);
+            border-radius: 10px;
+            padding: 0.7rem 1rem;
+            transition: all 0.25s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: #f5fefb;
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .form-text {
+            color: var(--text-muted) !important;
+        }
+
+        /* ── Alert Messages ── */
+        .alert-messages .alert {
+            border-radius: 12px;
+            font-weight: 500;
+            padding: 0.8rem 1.2rem;
+            font-size: 0.9rem;
+            animation: fadeInUp 0.4s ease both;
+        }
+
+        /* ── Scroll Animations (CSS only) ── */
+        .animate-on-scroll {
+            animation: fadeInUp 0.6s ease both;
+        }
+
+        /* ── Alert ── */
+        .alert {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .alert-info {
+            border-color: rgba(6, 182, 212, 0.3);
+            background: rgba(6, 182, 212, 0.08);
+        }
+
+        .alert-success {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .alert-danger {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.08);
+        }
+
+        /* ── Breadcrumbs ── */
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+        }
+        .breadcrumb-item a { color: var(--accent-primary); text-decoration: none; }
+        .breadcrumb-item.active { color: var(--text-muted); }
+        .breadcrumb-item + .breadcrumb-item::before { color: var(--text-muted); }
+
+        /* ── Misc ── */
+        .text-gradient {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glow-border {
+            border: 1px solid rgba(13, 148, 136, 0.25);
+            box-shadow: 0 2px 16px rgba(13, 148, 136, 0.06);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(13, 148, 136, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(13, 148, 136, 0.1);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* ── Modal override ── */
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            color: var(--text-primary);
+        }
+        .modal-header { border-bottom-color: var(--border-color); }
+        .modal-footer { border-top-color: var(--border-color); }
+        .btn-close { filter: none; }
+        .modal-backdrop { z-index: 1040 !important; }
+        .modal { z-index: 1050 !important; }
+
+        /* ── Link style ── */
+        a { color: var(--accent-primary); }
+        a:hover { color: var(--accent-secondary); }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+
+        /* ── Profile avatar ── */
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 4px 20px rgba(13, 148, 136, 0.25);
+        }
+
+        .avatar-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .container { padding-left: 1rem; padding-right: 1rem; }
+            #toast-container { left: 10px; right: 10px; max-width: none; }
+        }
+
+        /* ── Footer ── */
+        .site-footer {
+            background: #f8fdfb;
+            border-top: 2px solid var(--border-color);
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        /* ── Card header ── */
+        .card-header {
+            background: #f8fdfb !important;
+            border-bottom: 2px solid var(--border-color) !important;
+        }
+
+        /* ── Shake animation ── */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+        .shake { animation: shake 0.5s ease-in-out; }
+
+        /* ── Pulse ── */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.2); }
+            50% { box-shadow: 0 0 20px 4px rgba(13, 148, 136, 0.1); }
+        }
+        .pulse-glow { animation: pulse-glow 2s infinite; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="TigerLabBD" height="30" class="d-inline-block align-top me-2">
+                TigerLabBD
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'challenge_list' %}">
+                            <i class="bi bi-puzzle me-1"></i>Challenges
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'leaderboard' %}">
+                            <i class="bi bi-trophy me-1"></i>Leaderboard
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'admin_review' %}" style="color: var(--warning) !important;">
+                                    <i class="bi bi-shield-check me-1"></i>
+                                    Admin
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'submit_challenge' %}">
+                                <i class="bi bi-plus-circle me-1"></i>Submit
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard' %}">
+                                <i class="bi bi-grid me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'public_profile' user.username %}">
+                                <span class="avatar-sm me-1">{{ user.username|first|upper }}</span>
+                                {{ user.username }}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link nav-link" style="text-decoration: none;">
+                                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                                </button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <a class="btn btn-primary btn-sm px-3" href="{% url 'register' %}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% if messages %}
+            <div class="alert-messages mb-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {% if message.tags == 'success' %}<i class="bi bi-check-circle-fill me-2"></i>{% elif message.tags == 'error' %}<i class="bi bi-x-circle-fill me-2"></i>{% elif message.tags == 'warning' %}<i class="bi bi-exclamation-triangle-fill me-2"></i>{% else %}<i class="bi bi-info-circle-fill me-2"></i>{% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer class="site-footer">
+        <div class="container text-center">
+            <p class="text-muted small mb-0">&copy; 2026 TigerLabBD — Built for the cyber warriors of Bangladesh</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

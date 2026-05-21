@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — TigerLabBD{% endblock %}
+
+{% block content %}
+<div class="mb-5 animate-on-scroll">
+    <h1 class="display-5 fw-bold mb-2"><span class="text-gradient">Dashboard</span></h1>
+    <p class="fs-5" style="color: var(--text-muted);">Overview of your performance and activity.</p>
+</div>
+
+<!-- Stats -->
+<div class="row g-4 mb-5">
+    <div class="col-md-4 fade-in-1">
+        <div class="stat-card">
+            <div class="stat-icon mx-auto" style="background: rgba(13, 148, 136, 0.1); color: var(--accent-primary);">
+                <i class="bi bi-trophy-fill"></i>
+            </div>
+            <h3 class="fw-bold mb-0">{{ user.profile.total_score }}</h3>
+            <p class="text-uppercase fw-bold small mb-0" style="color: var(--text-muted);">Total Score</p>
+        </div>
+    </div>
+    <div class="col-md-4 fade-in-2">
+        <div class="stat-card">
+            <div class="stat-icon mx-auto" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h3 class="fw-bold mb-0">{{ solved_count }}</h3>
+            <p class="text-uppercase fw-bold small mb-0" style="color: var(--text-muted);">Challenges Solved</p>
+        </div>
+    </div>
+    <div class="col-md-4 fade-in-3">
+        <div class="stat-card">
+            <div class="stat-icon mx-auto" style="background: rgba(14, 165, 233, 0.1); color: var(--accent-secondary);">
+                <i class="bi bi-pencil-square"></i>
+            </div>
+            <h3 class="fw-bold mb-0">{{ authored_challenges.count }}</h3>
+            <p class="text-uppercase fw-bold small mb-0" style="color: var(--text-muted);">Challenges Authored</p>
+        </div>
+    </div>
+</div>
+
+<!-- Tables -->
+<div class="row g-4">
+    <div class="col-lg-6 animate-on-scroll">
+        <div class="card">
+            <div class="card-header py-3 px-4">
+                <h5 class="fw-bold m-0">
+                    <i class="bi bi-clock-history me-2" style="color: var(--accent-primary);"></i>My Submissions
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Challenge</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for submission in submissions %}
+                            <tr>
+                                <td class="ps-4 fw-medium">{{ submission.challenge.title }}</td>
+                                <td>
+                                    {% if submission.is_correct %}
+                                        <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: var(--success);">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Correct
+                                        </span>
+                                    {% else %}
+                                        <span class="badge" style="background: rgba(239, 68, 68, 0.12); color: var(--danger);">
+                                            <i class="bi bi-x-circle-fill me-1"></i>Incorrect
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4 small" style="color: var(--text-muted);">{{ submission.submitted_at|date:"M d, Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4" style="color: var(--text-muted);">No submissions found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 animate-on-scroll">
+        <div class="card">
+            <div class="card-header py-3 px-4">
+                <h5 class="fw-bold m-0">
+                    <i class="bi bi-journal-code me-2" style="color: var(--accent-secondary);"></i>Authored Challenges
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Title</th>
+                                <th class="text-end pe-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for challenge in authored_challenges %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-medium">{{ challenge.title }}</div>
+                                    {% if challenge.status == 'REJECTED' and challenge.rejection_reason %}
+                                        <div class="small mt-1" style="color: var(--danger);">
+                                            <i class="bi bi-info-circle me-1"></i>{{ challenge.rejection_reason }}
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    {% if challenge.status == 'APPROVED' %}
+                                        <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: var(--success);">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Approved
+                                        </span>
+                                    {% elif challenge.status == 'REJECTED' %}
+                                        <span class="badge" style="background: rgba(239, 68, 68, 0.12); color: var(--danger);">
+                                            <i class="bi bi-x-circle-fill me-1"></i>Rejected
+                                        </span>
+                                    {% else %}
+                                        <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: var(--warning);">
+                                            <i class="bi bi-clock-fill me-1"></i>Pending
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center py-4" style="color: var(--text-muted);">You haven't authored any challenges.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

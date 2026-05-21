@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Review: {{ challenge.title }} — TigerLabBD{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-9">
+        <nav aria-label="breadcrumb" class="mb-4 animate-on-scroll">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'admin_review' %}">Admin Review</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Review Submission</li>
+            </ol>
+        </nav>
+
+        <div class="card glow-border animate-on-scroll">
+            <div class="card-header py-4 px-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="badge mb-2 d-inline-block" style="background: rgba(245, 158, 11, 0.12); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.25);">
+                        <i class="bi bi-clock-fill me-1"></i>Pending Review
+                    </span>
+                    <h2 class="fw-bold m-0">{{ challenge.title }}</h2>
+                </div>
+                <div class="text-end">
+                    <div class="h3 fw-bold text-gradient mb-0 mono">{{ challenge.points }}</div>
+                    <small class="text-uppercase fw-bold small" style="color: var(--text-muted);">Points</small>
+                </div>
+            </div>
+            
+            <div class="card-body p-4">
+                <!-- Meta Info -->
+                <div class="row g-3 mb-4 animate-on-scroll">
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3" style="background: var(--bg-secondary); border: 1px solid var(--border-color);">
+                            <small class="d-block small text-uppercase fw-bold mb-1" style="color: var(--text-muted);">Author</small>
+                            <a href="{% url 'public_profile' challenge.author.username %}" class="text-decoration-none fw-medium">
+                                {{ challenge.author.username }}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3" style="background: var(--bg-secondary); border: 1px solid var(--border-color);">
+                            <small class="d-block small text-uppercase fw-bold mb-1" style="color: var(--text-muted);">Category</small>
+                            <span class="fw-medium">{{ challenge.category.name }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3" style="background: var(--bg-secondary); border: 1px solid var(--border-color);">
+                            <small class="d-block small text-uppercase fw-bold mb-1" style="color: var(--text-muted);">Submitted</small>
+                            <span class="fw-medium">{{ challenge.created_at|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4 animate-on-scroll">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-file-text me-2" style="color: var(--accent-primary);"></i>Description</h6>
+                    <div class="p-4 rounded-3" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-secondary);">
+                        {{ challenge.description|linebreaks }}
+                    </div>
+                </div>
+
+                <!-- Flag -->
+                <div class="mb-4 animate-on-scroll">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-key me-2" style="color: var(--warning);"></i>Correct Flag</h6>
+                    <div class="p-3 rounded-3 mono fw-bold" style="background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.2); color: var(--warning);">
+                        {{ challenge.flag }}
+                    </div>
+                </div>
+
+                <!-- Writeup -->
+                <div class="mb-4 animate-on-scroll">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-journal-text me-2" style="color: var(--accent-secondary);"></i>Author Writeup</h6>
+                    {% if challenge.writeup %}
+                        <div class="p-4 rounded-3" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-secondary);">
+                            {{ challenge.writeup|linebreaks }}
+                        </div>
+                    {% else %}
+                        <div class="p-3 rounded-3 text-center" style="background: var(--bg-secondary); border: 1px solid var(--border-color);">
+                            <span style="color: var(--text-muted);">No writeup provided.</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Reports on this challenge -->
+                {% if reports %}
+                <div class="mb-4 animate-on-scroll">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-flag me-2" style="color: var(--danger);"></i>Reports
+                        <span class="badge bg-danger bg-opacity-25 text-danger ms-2">{{ reports|length }}</span>
+                    </h6>
+                    <div class="p-3 rounded-3" style="background: var(--bg-secondary); border: 1px solid var(--border-color);">
+                        {% for report in reports %}
+                        <div class="d-flex justify-content-between align-items-start {% if not forloop.last %}mb-3 pb-3{% endif %}" {% if not forloop.last %}style="border-bottom: 1px solid var(--border-color);"{% endif %}>
+                            <div>
+                                <span class="badge bg-warning bg-opacity-15 text-warning me-2">{{ report.get_reason_display }}</span>
+                                <span class="small" style="color: var(--text-muted);">by {{ report.user.username }} — {{ report.created_at|date:"M d" }}</span>
+                                {% if report.details %}
+                                    <p class="small mb-0 mt-1" style="color: var(--text-secondary);">{{ report.details }}</p>
+                                {% endif %}
+                            </div>
+                            {% if not report.is_resolved %}
+                            <form method="post" action="{% url 'resolve_report' report.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success btn-sm">Resolve</button>
+                            </form>
+                            {% else %}
+                            <span class="badge bg-success bg-opacity-15 text-success">Resolved</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Approve / Reject Actions -->
+                <div class="pt-4 animate-on-scroll" style="border-top: 1px solid var(--border-color);">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-4 rounded-3 h-100" style="background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.2);">
+                                <h5 class="fw-bold mb-3" style="color: var(--danger);">
+                                    <i class="bi bi-x-circle me-2"></i>Reject
+                                </h5>
+                                <form action="{% url 'reject_challenge' challenge.pk %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="rejection_reason" class="form-label small fw-bold">Rejection Reason</label>
+                                        <textarea name="rejection_reason" id="rejection_reason" class="form-control" rows="3" placeholder="Provide feedback to the author..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-danger w-100 fw-bold" onclick="return confirm('Confirm rejection?')">
+                                        <i class="bi bi-x-circle me-2"></i>Reject Challenge
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-4 rounded-3 h-100 d-flex flex-column justify-content-between" style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.2);">
+                                <div>
+                                    <h5 class="fw-bold mb-3" style="color: var(--success);">
+                                        <i class="bi bi-check-circle me-2"></i>Approve
+                                    </h5>
+                                    <p class="small" style="color: var(--text-muted);">Once approved, the challenge will be live and visible to all users.</p>
+                                </div>
+                                <form action="{% url 'approve_challenge' challenge.pk %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success w-100 btn-lg fw-bold">
+                                        <i class="bi bi-check-circle me-2"></i>Approve & Publish
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

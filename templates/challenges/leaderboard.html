@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Leaderboard — TigerLabBD{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="mb-5 fade-in">
+            <h1 class="display-5 fw-bold mb-2"><span class="text-gradient">Scoreboard</span></h1>
+            <p class="fs-5" style="color: var(--text-muted);">Current rankings of the top performers.</p>
+        </div>
+
+        <div class="card fade-in-1">
+            <div class="card-body p-0">
+                <!-- Title Row -->
+                <div class="d-flex align-items-center px-4 py-3 border-bottom" style="background: #f8fdfb; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; color: var(--text-muted); border-radius: 16px 16px 0 0;">
+                    <span style="width: 50px;">Rank</span>
+                    <span class="flex-fill">User</span>
+                    <span style="width: 80px; text-align: right;">Score</span>
+                </div>
+
+                {% for profile in profiles %}
+                <div class="d-flex align-items-center px-4 py-3 {% if not forloop.last %}border-bottom{% endif %}" style="{% if profile.user == user %}background: rgba(13, 148, 136, 0.06);{% endif %}">
+                    <span class="fw-bold" style="width: 50px; color: var(--text-muted);">#{{ forloop.counter }}</span>
+                    <a href="{% url 'public_profile' profile.user.username %}" class="text-decoration-none d-flex align-items-center gap-2 flex-fill">
+                        <span class="avatar-sm" style="width:30px;height:30px;font-size:0.7rem;">{{ profile.user.username|first|upper }}</span>
+                        <span class="fw-medium" style="color: var(--text-primary);">{{ profile.user.username }}</span>
+                        {% if profile.user == user %}
+                            <span class="badge" style="background: rgba(13, 148, 136, 0.12); color: var(--accent-primary); font-size: 0.6rem;">You</span>
+                        {% endif %}
+                    </a>
+                    <span class="fw-bold mono" style="width: 80px; text-align: right; color: var(--accent-primary);">{{ profile.total_score }} pts</span>
+                </div>
+                {% empty %}
+                <div class="text-center py-5" style="color: var(--text-muted);">
+                    <p class="mb-0">No entries available yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

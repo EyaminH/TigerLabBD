@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Challenge — TigerLabBD{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="mb-5 animate-on-scroll">
+            <h1 class="display-5 fw-bold mb-2"><span class="text-gradient">Submit Challenge</span></h1>
+            <p class="fs-5" style="color: var(--text-muted);">Contribute a new challenge to the community.</p>
+        </div>
+
+        <div class="card glow-border animate-on-scroll">
+            <div class="card-body p-4">
+                <div class="p-3 rounded-3 mb-4" style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.25);">
+                    <i class="bi bi-info-circle-fill me-2" style="color: var(--info);"></i>
+                    <span class="small">All submissions are reviewed by moderators before appearing on the platform. You must provide a <strong>unique flag</strong> and a <strong>writeup</strong>.</span>
+                </div>
+
+                <form method="post" id="submit-challenge-form">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-12 mb-3">
+                            <label for="title" class="form-label fw-bold small">Challenge Title</label>
+                            <input type="text" name="title" id="title" class="form-control" 
+                                   placeholder="e.g. Simple Web Exploit" required
+                                   value="{{ form_data.title|default:'' }}">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="category" class="form-label fw-bold small">Category</label>
+                            <select name="category" id="category" class="form-select" required>
+                                <option value="" selected disabled>Select a category</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if form_data.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="points" class="form-label fw-bold small">Points</label>
+                            <input type="number" name="points" id="points" class="form-control" 
+                                   value="{{ form_data.points|default:'100' }}" min="1" required>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label for="description" class="form-label fw-bold small">Description</label>
+                            <textarea name="description" id="description" rows="5" class="form-control" 
+                                      placeholder="Provide instructions and details for the challenge..." required>{{ form_data.description|default:'' }}</textarea>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label for="flag" class="form-label fw-bold small">
+                                <i class="bi bi-key me-1" style="color: var(--accent-primary);"></i>Correct Flag
+                            </label>
+                            <input type="text" name="flag" id="flag" class="form-control mono" 
+                                   placeholder="e.g. Flag{example_text}" required
+                                   value="{{ form_data.flag|default:'' }}">
+                            <div class="form-text small mt-1">
+                                <i class="bi bi-exclamation-circle me-1"></i>Must be unique — flags matching existing challenges will be rejected.
+                            </div>
+                            <div id="flag-check-result" class="small mt-1"></div>
+                        </div>
+
+                        <div class="col-md-12 mb-4">
+                            <label for="writeup" class="form-label fw-bold small">
+                                <i class="bi bi-journal-text me-1" style="color: var(--accent-secondary);"></i>Writeup <span style="color: var(--danger);">*</span>
+                            </label>
+                            <textarea name="writeup" id="writeup" rows="6" class="form-control" 
+                                      placeholder="Explain how to solve your challenge. This helps admins verify the challenge quality and is required for submission." required>{{ form_data.writeup|default:'' }}</textarea>
+                            <div class="form-text small mt-1">
+                                <i class="bi bi-info-circle me-1"></i>Required. Describe the solution approach, tools needed, and expected difficulty.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 py-2 mt-2 fw-bold" id="submit-btn">
+                        <i class="bi bi-send me-2"></i>Submit for Review
+                    </button>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'dashboard' %}" class="text-decoration-none small" style="color: var(--text-muted);">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
