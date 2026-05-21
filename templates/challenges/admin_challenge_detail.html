@@ -92,7 +92,7 @@
                         {% for report in reports %}
                         <div class="d-flex justify-content-between align-items-start {% if not forloop.last %}mb-3 pb-3{% endif %}" {% if not forloop.last %}style="border-bottom: 1px solid var(--border-color);"{% endif %}>
                             <div>
-                                <span class="badge bg-warning bg-opacity-15 text-warning me-2">{{ report.get_reason_display }}</span>
+                                <span class="badge me-2" style="background-color: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.25);">{{ report.get_reason_display }}</span>
                                 <span class="small" style="color: var(--text-muted);">by {{ report.user.username }} — {{ report.created_at|date:"M d" }}</span>
                                 {% if report.details %}
                                     <p class="small mb-0 mt-1" style="color: var(--text-secondary);">{{ report.details }}</p>
