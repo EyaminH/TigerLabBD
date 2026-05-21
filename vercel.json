@@ -10,10 +10,6 @@
   "buildCommand": "bash vercel_build.sh",
   "routes": [
     {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
       "src": "/(.*)",
       "dest": "ctf_platform/wsgi.py"
     }
